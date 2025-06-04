@@ -74,131 +74,128 @@ Chemnitz Cultural Explorer lets visitors discover cultural points of interest—
 
 ## Installation & Usage
 ---
-
-## Technology Stack
-
-- **Frontend**: React, React-Leaflet, Tailwind CSS  
-- **Backend**: Node.js, Express, MongoDB (Mongoose), JWT, bcrypt  
-- **Map Tiles**: OpenStreetMap via Leaflet  
-- **Deployment**: Backend on Render, Frontend on Netlify
-
----
-
-## Folder Structure
-
-mapProject/
-├── backend/
-│ ├── controllers/
-│ ├── middleware/
-│ ├── models/
-│ ├── routes/
-│ ├── scripts/
-│ ├── server.js
-│ └── .env.example
-├── frontend/
-│ ├── public/
-│ └── src/
-│ ├── App.js
-│ ├── index.js
-│ └── index.css
-└── README.md
-
-
-**backend/**  
-- Contains Express server code, API routes, controllers, data models, and import scripts.  
-- Includes `.env.example` configuration for MongoDB connection and JWT secret.
-
-**frontend/**  
-- Contains React app code with components, styles, and configuration.  
-- Includes map integration, login/register forms, and favorite-management logic.
-
----
-
-## Setup Instructions
-
 1. **Clone the Repository**  
-   - Copy the project from GitHub to your local machine.
+   ```bash
+   git clone https://github.com/your-username/chemnitz-cultural-explorer.git
+   cd chemnitz-cultural-explorer
+   ```
+2. **Backend Setup**
+   ```bash
+   cd backend
+   npm install
+   ```
+  
+- Configure Environment Variables.
 
-2. **Backend Configuration**  
-   - Navigate into the `backend/` folder.  
-   - Install dependencies: `npm install`  
-   - Create a `.env` file based on the provided example (`.env.example`), filling in your MongoDB connection string and JWT secret.  
-   - Run the import script to load GeoJSON data of cultural sites into MongoDB:  
-     ```
-     node scripts/importGeoJSON.js
-     ```  
-   - Start the Express server:  
-     ```
-     npm start
-     ```
+  Copy `.env.example` to `.env` and fill in your own values:
+   ```bash
+    MONGO_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret_key
+    PORT=5000
+    ```
 
-3. **Frontend Configuration**  
-   - Switch to the `frontend/` folder.  
-   - Install dependencies: `npm install`  
-   - Start the React development server: `npm start`  
-   - Open a browser at `http://localhost:3000` to view the app.
+- Import GeoJSON Data
 
-4. **Register & Login**  
-   - Create a new user account via the registration form.  
-   - Log in to begin saving favorite sites and using the full functionality of the map.
+  Run the import script to load Chemnitz.geojson into MongoDB:
+  ```bash
+  node scripts/importGeoJSON.js
+  ``` 
+- Start the Server
 
-5. **Using the Map**  
-   - Filter by category using the dropdown at the top.  
-   - Search by name or address in the search field.  
-   - Click any marker to view detailed information about that site.  
-   - When logged in, click the heart icon in the popup to add or remove a site from your favorites.  
-   - Toggle “Show Only Favorites” to display only the sites you’ve favorited.
+   ```bash
+    npm start 
+   ```
 
----
+The Express server will run on port 5000 (or the port specified in `.env`). Backend endpoints are now available at `http://localhost:5000/api/...`.
 
-## API Overview
+3. Frontend Setup
+   ```bash
+   cd ../frontend
+   npm install
 
-- **Fetch All Sites**  
-  Retrieve a list of all cultural sites, with optional `category` or `search` query parameters.
+- Configure API URL (Optional)
 
-- **User Registration**  
-  Create a new user account using email and password.
+By default, the React app calls http://localhost:5000/api/. To override in production, set an environment variable (e.g., in Netlify):
+    ```bash
+        REACT_APP_API_URL=https://your-render-backend-url <br>
 
-- **User Login**  
-  Authenticate and receive a JWT for secured routes.
 
-- **Get Favorites** (Protected)  
-  Retrieve the current user’s favorite sites.
 
-- **Add to Favorites** (Protected)  
-  Mark a site as favorite.
 
-- **Remove from Favorites** (Protected)  
-  Unmark a site as favorite.
+- Configure API URL (Optional)
 
----
+By default, the React app calls `http://localhost:5000/api/`. To override in production, set an environment variable (e.g., in Netlify):
+
+Start the React App
+   ```bash
+      npm start
+```
+
+Open your browser at `http://localhost:3000`.
+
+4. Register & Login
+
+Click “Register” to create a new user (email + password).
+
+Log in immediately to store your JWT in `localStorage`.
 
 ## Deployment
+1. **Backend (Render)**
 
-### Backend (Express & MongoDB)
-- Deploy on Render by connecting your GitHub repository.  
-- Configure build and start commands, and set environment variables (`MONGO_URI`, `JWT_SECRET`).  
-- Once deployed, the Express API will be accessible via a Render URL.
+   - Push your backend/ folder to GitHub.
 
-### Frontend (React & Tailwind)
-- Deploy on Netlify by linking the frontend folder to your GitHub repository.  
-- Configure the build command and set the publish directory to the build output.  
-- Optionally set an environment variable (`REACT_APP_API_URL`) so the React app calls your Render backend.
+   - In Render:
 
----
+      - Create a New Web Service.
 
-## Contribution Guidelines
+      - Connect to your GitHub repo.
 
-Contributions are welcome! To contribute:
-1. Fork the repository.  
-2. Create a feature branch (e.g., `feature/new-feature`).  
-3. Commit your changes with clear messages.  
-4. Push to your fork and open a pull request.
+      - Build Command: npm install
 
-Please follow the existing code style and ensure any new functionality is well documented.
+      - Start Command: node server.js
 
----
+      - Add Environment Variables in Render settings:
 
-## License
+        - MONGO_URI
 
-This project is licensed under the MIT License.
+        - JWT_SECRET
+
+     - Deploy. Once live, the backend API will be accessible (e.g., https://chemnitz-backend.onrender.com).
+
+2. **Frontend (Netlify)**
+
+    - Push your frontend/ folder to GitHub.
+
+    - In Netlify:
+
+       - Create a New Site from Git.
+
+       - Set Base directory to frontend (if repository root).
+
+       - Build Command: npm run build
+
+       - Publish Directory: build
+
+       - (Optional) Add REACT_APP_API_URL=https://chemnitz-backend.onrender.com to Environment Variables.
+
+   - Deploy. The React app will be served (e.g., https://chemnitz-frontend.netlify.app).
+
+### Contribution Guidelines
+Contributions are welcome!
+
+1. Fork the repository.
+
+2. Create a feature branch:
+
+   ```bash
+   git checkout -b feature/new-feature 
+   ```
+3. Commit your changes with clear, descriptive messages.
+
+4. Push to your fork and open a Pull Request.
+
+5. Ensure your code follows the existing style and includes necessary documentation.
+
+**License**
+
+This project is licensed under the MIT License. See the LICENSE file for details.
