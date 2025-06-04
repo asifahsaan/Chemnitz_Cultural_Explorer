@@ -12,26 +12,67 @@ Chemnitz Cultural Explorer lets visitors discover cultural points of interest—
 
 ## Features
 
-### Interactive Map
-- Markers show cultural sites with details (name, category, address, website link, wheelchair access).  
-- Clicking a marker displays full information in a popup.
+- **Interactive Map Display**  
+  - Leaflet-based map showing all cultural locations (museums, galleries, restaurants, historical landmarks, etc.).  
+  - Clicking a marker opens a popup with details:  
+    - Name  
+    - Category  
+    - Address  
+    - Website link (if available)  
+    - Wheelchair accessibility status  
 
-### Filter & Search
-- Dropdown filter by category (e.g., museum, gallery, restaurant).  
-- Search bar to find sites by name or address.
+- **Filter & Search Functionality**  
+  - **Category Filter**: Dropdown to select categories (e.g., museum, gallery, restaurant, hotel).  
+  - **Search Bar**: Type a name or address fragment to display matching sites in real time.  
 
-### User Authentication
-- Registration and login using email and password.  
-- JSON Web Tokens (JWT) for secure API access.
+- **User Authentication (JWT)**  
+  - **Registration & Login**: Create an account with email and password.  
+  - **Secure API Access**: JSON Web Tokens (JWT) issued upon login, required for protected routes.  
+  - **Logout Button**: Clears token and resets favorites.  
 
-### Favorites Management
-- Logged-in users can “heart” or “unheart” any site.  
-- Favorites are stored in the database and persist across sessions.  
-- A toggle option shows only favorite sites on the map.
+- **Favorites Management**  
+  - **Add/Remove Favorites**: While logged in, click the heart icon in a marker’s popup to save or remove that site.  
+  - **Persisted Favorites**: Favorited site IDs are stored in MongoDB under each user.  
+  - **“Show Only Favorites” Toggle**: A checkbox filters the map to display only your favorited sites.  
 
-### Responsive Design
-- Styled with Tailwind CSS for a clean, mobile-friendly interface.
+- **Responsive UI with Tailwind CSS**  
+  - Clean, mobile-friendly design.  
+  - Tailwind utility classes used for consistent spacing, typography, and form inputs.  
 
+## How It Works
+
+1. **Initial Setup**  
+   - On first run, the backend imports a provided `Chemnitz.geojson` file containing coordinates and properties for all cultural sites.  
+   - Each site document includes name, category, address, website, wheelchair info, and a geospatial Point.  
+
+2. **API Structure (Express + MongoDB)**  
+   - **Unprotected Routes**:  
+     - `GET /api/sites` — Fetch all sites, with optional `?category=` or `?search=` query parameters.  
+     - `GET /api/sites?category=museum&search=park` — Combined filtering by category and search.  
+   - **Authentication Routes**:  
+     - `POST /api/users/register` — Register a new user (requires unique email).  
+     - `POST /api/users/login` — Log in with email/password; returns `{ token }`.  
+   - **Protected Favorite Routes (JWT required)**:  
+     - `GET /api/users/favorites` — Return an array of full site objects that the user favorited.  
+     - `POST /api/users/favorites/:siteId` — Add a site to the user’s favorites.  
+     - `DELETE /api/users/favorites/:siteId` — Remove a site from the user’s favorites.  
+
+3. **Frontend Interaction (React + React-Leaflet)**  
+   - **MapContainer & Markers**: Fetches `/api/sites`, displays markers at each site’s coordinates.  
+   - **Popup Content**: Each marker’s popup shows name, category, address, website link, wheelchair info, and (when logged in) a heart icon to toggle favorites.  
+   - **State Management**:  
+     - `sites` holds the array of all fetched site objects.  
+     - `category` and `search` track filter inputs to re-fetch from the API.  
+     - `token` stores the JWT from `localStorage` after login.  
+     - `favorites` is an array of favorited site IDs (fetched from `/api/users/favorites`).  
+     - `showOnlyFavorites` (boolean) toggles whether to display all sites or only those in favorites.  
+
+4. **Favorites & Filtering Logic**  
+   - When `favorites` is fetched on login, the frontend compares each site’s `_id` to that list.  
+   - Clicking the heart icon sends a `POST` or `DELETE` to `/api/users/favorites/:siteId`, then updates `favorites` in state.  
+   - The “Show Only Favorites” checkbox filters the displayed sites to only those whose `_id` is in `favorites`.  
+
+## Installation & Usage
 ---
 
 ## Technology Stack
