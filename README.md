@@ -2,6 +2,8 @@
 
 A full-stack MERN application that displays cultural sites in Chemnitz on an interactive map. Users can register, log in, explore locations, filter and search for sites, and manage their personal favorites.
 
+![image](https://github.com/user-attachments/assets/c942eb2b-a3df-4430-b5b9-23af2da959aa)
+
 ---
 
 ## Overview
